@@ -313,7 +313,7 @@ def main():
 
     known_faces = load_known_faces()
 
-    _cap = cv2.VideoCapture(0)
+    _cap = cv2.VideoCapture(1)
     cap = _cap
     if not cap.isOpened():
         print("[SYS] Erreur : impossible d'ouvrir la webcam.")
