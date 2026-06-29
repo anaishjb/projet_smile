@@ -174,6 +174,19 @@ def start_executors():
     if _ollama_executor is None:
         _ollama_executor = ThreadPoolExecutor(max_workers=1)
         print("[CORE] Executor Ollama demarre")
+        print("[OLLAMA] Prechauffage en cours...")
+        try:
+            import requests
+            from src.config import OLLAMA_URL, MODEL_NAME
+            requests.post(OLLAMA_URL, json={
+                "model": MODEL_NAME,
+                "prompt": " ",
+                "stream": False,
+                "num_predict": 1,
+            }, timeout=30)
+            print("[OLLAMA] Modele pret.")
+        except Exception as e:
+            print(f"[OLLAMA] Prechauffage echoue : {e}")
 
 
 def shutdown_executors():
