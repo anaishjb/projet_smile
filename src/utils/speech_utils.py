@@ -9,15 +9,23 @@ import pyttsx3
 from src.config import VOSK_MODEL_PATH, VOICE_RATE, VOICE_VOLUME, DEFAULT_VOICE_INDEX, MIC_INDEX, MIC_SAMPLE_RATE
 model = Model(str(VOSK_MODEL_PATH))
 
+_furhat = None
+
+try:
+    from furhat_remote_api import FurhatRemoteAPI
+    _furhat = FurhatRemoteAPI("localhost")
+    print("[TTS] Furhat connecte sur localhost:54321")
+except Exception:
+    print("[TTS] Furhat non disponible, fallback pyttsx3")
+
 
 def speak(text):
-    try:
-        from furhat_remote_api import FurhatRemoteAPI
-        furhat = FurhatRemoteAPI("localhost")
-        furhat.say(text=text, blocking=True)
-        return
-    except Exception:
-        pass
+    if _furhat is not None:
+        try:
+            _furhat.say(text=text, blocking=True)
+            return
+        except Exception:
+            pass
     engine = pyttsx3.init()
     engine.setProperty('rate', VOICE_RATE)
     engine.setProperty('volume', VOICE_VOLUME)
