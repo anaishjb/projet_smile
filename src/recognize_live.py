@@ -271,6 +271,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
             speak_async(speak, reply).result()
             log_full_conversation(face_id, user_text, reply)
             print(f"[TTS] Robot : \"{reply}\"\n")
+            try:
+                furhat = get_furhat()
+                if furhat: furhat.gesture(name="Nod")
+            except Exception: pass
             time.sleep(1.0)
             print("[CONV] Pret a ecouter !")
 
