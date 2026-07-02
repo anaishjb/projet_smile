@@ -14,7 +14,7 @@ from datetime import datetime
 
 from src.config import EMBEDDINGS_FILE
 from src.utils.facenet_utils import compare_embeddings
-from src.utils.speech_utils import speak, transcribe_audio, extract_name_from_text
+from src.utils.speech_utils import speak, transcribe_audio, extract_name_from_text, get_furhat
 from src.utils.dialog_manager import ask_ollama_with_context, summarize_conversation
 from src.utils.text_post import clean_llm_reply
 from src.utils.profile_manager import load_recent_history, load_profile, save_profile
@@ -169,6 +169,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
                 ):
                     state = "FREE_TALK"
                 else:
+                    try:
+                        furhat = get_furhat()
+                        if furhat: furhat.gesture(name="GazeAway")
+                    except Exception: pass
                     reply_future = ask_ollama_async(
                         lambda prompt: ask_ollama_with_context(
                             face_id,
@@ -213,6 +217,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
                     "Maximum deux phrases. Ne pose pas de questions."
                 )
 
+                try:
+                    furhat = get_furhat()
+                    if furhat: furhat.gesture(name="GazeAway")
+                except Exception: pass
                 reply_future = ask_ollama_async(
                     lambda prompt: ask_ollama_with_context(
                         face_id,
@@ -233,6 +241,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
             # === 3c. Conversation normale (FREE_TALK) ===
             state = "FREE_TALK"
 
+            try:
+                furhat = get_furhat()
+                if furhat: furhat.gesture(name="GazeAway")
+            except Exception: pass
             reply_future = ask_ollama_async(
                 lambda prompt: ask_ollama_with_context(
                     face_id,
