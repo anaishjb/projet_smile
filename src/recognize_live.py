@@ -171,7 +171,9 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
                 else:
                     try:
                         furhat = get_furhat()
-                        if furhat: furhat.gesture(name="GazeAway")
+                        if furhat:
+                            furhat.gesture(name="GazeAway")
+                            furhat.gesture(name="BrowRaise")
                     except Exception: pass
                     reply_future = ask_ollama_async(
                         lambda prompt: ask_ollama_with_context(
@@ -219,7 +221,9 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
 
                 try:
                     furhat = get_furhat()
-                    if furhat: furhat.gesture(name="GazeAway")
+                    if furhat:
+                        furhat.gesture(name="GazeAway")
+                        furhat.gesture(name="BrowRaise")
                 except Exception: pass
                 reply_future = ask_ollama_async(
                     lambda prompt: ask_ollama_with_context(
@@ -243,7 +247,9 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
 
             try:
                 furhat = get_furhat()
-                if furhat: furhat.gesture(name="GazeAway")
+                if furhat:
+                    furhat.gesture(name="GazeAway")
+                    furhat.gesture(name="BrowRaise")
             except Exception: pass
             reply_future = ask_ollama_async(
                 lambda prompt: ask_ollama_with_context(
