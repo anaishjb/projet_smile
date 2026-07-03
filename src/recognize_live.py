@@ -106,6 +106,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
             face_id = generate_face_id(display_name)
 
             speak_async(speak, f"Enchanté {display_name} ! Je me souviendrai de toi. Comment tu vas aujourd'hui ?").result()
+            try:
+                furhat = get_furhat()
+                if furhat: furhat.gesture(name="Nod")
+            except Exception: pass
 
             save_new_face(face_id, embedding)
             known_faces[face_id] = embedding
@@ -119,6 +123,10 @@ def handle_interaction(face_id, display_name: str, known_faces: dict, seen_faces
 
         else:
             speak_async(speak, f"Bonjour {display_name} !").result()
+            try:
+                furhat = get_furhat()
+                if furhat: furhat.gesture(name="Nod")
+            except Exception: pass
             time.sleep(1.2)
 
         # === 2. Machine d'etats conversationnelle ===
