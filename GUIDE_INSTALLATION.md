@@ -10,14 +10,12 @@
 
 ## Lancer SMILE (utilisation courante)
 
-Ouvre deux terminaux :
-
-**Terminal 1 — Ollama (LLM local) :**
+Sur Windows, Ollama tourne en arrière-plan automatiquement après installation (icône barre des tâches, service sur `localhost:11434`) — pas besoin de lancer `ollama serve` manuellement. Vérifier que le service répond :
 ```bat
-ollama serve
+curl http://localhost:11434
 ```
 
-**Terminal 2 — SMILE :**
+**Terminal — SMILE :**
 ```bat
 cd C:\Users\LUTIN\Documents\Projets\SMILE
 facenet\Scripts\activate
@@ -42,6 +40,7 @@ Au démarrage :
 | Webcam | branchée et non utilisée par une autre app |
 | Micro | branché (index configurable dans `config.py`) |
 | RAM | ≥ 8 Go |
+| Java JDK 8 | requis pour le SDK Furhat (installable via le SDK Launcher) |
 
 ---
 
@@ -74,7 +73,22 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Créer le fichier de configuration
+> `furhat-remote-api==1.0.2` est déjà listé dans `requirements.txt`.
+
+### 4. Installer Furhat (Virtual Furhat / SDK)
+
+Furhat n'est pas un simple package pip — c'est un SDK propriétaire à demander :
+
+1. Aller sur [furhat.io](https://furhat.io) et remplir le formulaire **Request SDK**.
+2. Créer un compte sur la **Furhat Developer Zone** via l'email reçu.
+3. Télécharger le **SDK Launcher** (recommandé) depuis [furhat.io/downloads](https://furhat.io/downloads), ou directement le zip du SDK pour Windows.
+4. Installer **Java JDK 8** si ce n'est pas déjà fait (le Launcher peut l'installer automatiquement).
+5. Lancer le SDK Launcher → il installe et démarre le **Virtual Furhat** en local.
+6. Vérifier que ça fonctionne : ouvrir `http://localhost:8080` dans un navigateur (mot de passe `admin`), tester la voix et un geste depuis l'interface web.
+
+Le code se connecte via `FurhatRemoteAPI("localhost")` (port par défaut `54321`) — aucune config supplémentaire côté Python tant que le Virtual Furhat tourne en local. Si Furhat n'est pas lancé, `speech_utils.get_furhat()` bascule automatiquement sur `pyttsx3` (pas de crash).
+
+### 5. Créer le fichier de configuration
 
 ```bat
 copy src\config_example.py src\config.py
@@ -86,7 +100,7 @@ copy src\config_example.py src\config.py
 BASE_DIR = "C:/Users/LUTIN/Documents/Projets/SMILE/SMILE"  # ← adapter
 VOSK_MODEL_PATH = "C:/Users/LUTIN/models/vosk-model-fr-0.22/vosk-model-fr-0.22"  # ← adapter
 MIC_INDEX = 20        # ← index de ton micro (voir section Dépannage)
-EMBEDDINGS_FILE = f"{BASE_DIR}/data/embeddings.pkl"  # (renommer depuis EMBEDDINGS_PATH dans l'exemple)
+EMBEDDINGS_FILE = f"{BASE_DIR}/data/embeddings.pkl"
 ```
 
 > **Note :** `src/config.py` est dans `.gitignore` — il n'est pas versionné.
@@ -123,6 +137,12 @@ L'erreur `can't grab frame (-1072875772)` signifie que la caméra est utilisée 
 ```bat
 facenet\Scripts\python.exe -c "import pyttsx3; e=pyttsx3.init(); e.say('Bonjour, je suis SMILE'); e.runAndWait()"
 ```
+
+**Tester la connexion Furhat :**
+```bat
+facenet\Scripts\python.exe -c "from furhat_remote_api import FurhatRemoteAPI; f=FurhatRemoteAPI('localhost'); f.say(text='Bonjour, je suis SMILE')"
+```
+Si ça échoue (`ConnectionError`), vérifier que le Virtual Furhat est bien lancé (SDK Launcher) et que `http://localhost:8080` répond. Le code bascule alors automatiquement sur `pyttsx3`, donc l'absence de Furhat n'empêche pas SMILE de fonctionner — juste la voix/les gestes seront dégradés.
 
 ---
 
